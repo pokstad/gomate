@@ -8,6 +8,8 @@ import (
 	"go/format"
 	"go/parser"
 	"go/token"
+
+	"github.com/pokstad/gomate"
 )
 
 // Declaration represents a top level declaration of the source code file
@@ -21,11 +23,11 @@ type Declaration struct {
 }
 
 // ParseFile will parse a Go source code file for declarations
-func ParseFile(fPath string) ([]Declaration, error) {
+func ParseFile(env gomate.Environment) ([]Declaration, error) {
 	fset := token.NewFileSet()
 	parserMode := parser.ParseComments
 
-	fileAst, err := parser.ParseFile(fset, fPath, nil, parserMode)
+	fileAst, err := parser.ParseFile(fset, env.CurrDoc, nil, parserMode)
 	if err != nil {
 		return nil, fmt.Errorf("unable to parse declarations: %s", err)
 	}

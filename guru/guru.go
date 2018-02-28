@@ -54,7 +54,7 @@ func ParseReferrers(ctx context.Context, env gomate.Environment) ([]gomate.CodeR
 		args[1:]...,
 	)
 
-	output, err := cmd.CombinedOutput()
+	output, err := cmd.Output()
 	if err != nil {
 		log.Printf("guru failed: %s", string(output))
 		return nil, gomate.PushE(err, "error from guru command")
@@ -62,7 +62,7 @@ func ParseReferrers(ctx context.Context, env gomate.Environment) ([]gomate.CodeR
 
 	var refs []gomate.CodeRef
 
-	log.Printf("Scan output: %s", string(output))
+	log.Printf("guru output: %s", string(output))
 
 	for _, line := range strings.Split(string(output), "\n") {
 		// check if empty line
