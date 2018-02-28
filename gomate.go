@@ -9,26 +9,29 @@ import (
 	"strings"
 )
 
-var htmlTmpl = template.Must(template.New("").Funcs(
-	template.FuncMap{
-		"safeURL": func(u string) template.URL { return template.URL(u) },
-	}).Parse(`
+const errWarnInfoTmpl = `
 <html>
 <head>
 </head>
 <body>
-  {{ range $category, $coderefs := . }}
-  <div>
-  	<h2> {{ $category }} </h2>
-    <ul>
-      {{ range $coderefs }}
-      <li><a href="{{ print . | safeURL }}">{{ .Filename }}:{{ .Line }}:{{ .Column }}:</a> {{ .Excerpt }}</li>
-      {{ end }}
-    </ul>
-  </div>
-  {{ end }}
+{{ range $category, $coderefs := . }}
+<div>
+<h2> {{ $category }} </h2>
+<ul>
+{{ range $coderefs }}
+<li><a href="{{ print . | safeURL }}">{{ .Filename }}:{{ .Line }}:{{ .Column }}:</a> {{ .Excerpt }}</li>
+{{ end }}
+</ul>
+</div>
+{{ end }}
 </body></html>
-`))
+`
+
+var htmlTmpl = template.Must(template.New("").Funcs(
+	template.FuncMap{
+		"safeURL": func(u string) template.URL { return template.URL(u) },
+	},
+).Parse(errWarnInfoTmpl))
 
 func RenderHTML(w io.Writer, errors, warnings, infos []CodeRef) error {
 	return htmlTmpl.Execute(w, map[string][]CodeRef{
@@ -72,18 +75,18 @@ func (cf CodeRef) String() string {
 
 // CalcOffset will return the byte offset for the specified line and column of
 // the reader (e.g. source code file)
-func CalcOffset(r io.Reader, line, col int) (int, error) {
+func CalcOffset(r io.Reader, line, col uint) (uint, error) {
 	var (
 		s  = bufio.NewScanner(r)
-		bc = 0
+		bc = uint(0)
 	)
 
-	for i := 1; s.Scan() && i < line; i++ {
+	for i := uint(1); s.Scan() && i < line; i++ {
 		if err := s.Err(); err != nil {
 			return 0, fmt.Errorf("unable to scan file for offset: %s", err)
 		}
 
-		bc += len(s.Text()) + 1 // add newline to text length
+		bc += uint(len(s.Text()) + 1) // add newline to text length
 	}
 
 	return bc + col, nil

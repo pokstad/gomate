@@ -35,29 +35,29 @@ const expectedHTML = `
 <head>
 </head>
 <body>
-  
-  <div>
-  	<h2> errors </h2>
-    <ul>
-      
-    </ul>
-  </div>
-  
-  <div>
-  	<h2> infos </h2>
-    <ul>
-      
-      <li><a href="txmt://open?line=1&amp;column=5&amp;url=file:///test.txt&amp;title=test.txt">test.txt:1:5:</a> this is a test</li>
-      
-    </ul>
-  </div>
-  
-  <div>
-  	<h2> warnings </h2>
-    <ul>
-      
-    </ul>
-  </div>
-  
+
+<div>
+<h2> errors </h2>
+<ul>
+
+</ul>
+</div>
+
+<div>
+<h2> infos </h2>
+<ul>
+
+<li><a href="txmt://open?line=1&amp;column=5&amp;url=file:///test.txt&amp;title=test.txt">test.txt:1:5:</a> this is a test</li>
+
+</ul>
+</div>
+
+<div>
+<h2> warnings </h2>
+<ul>
+
+</ul>
+</div>
+
 </body></html>
 `

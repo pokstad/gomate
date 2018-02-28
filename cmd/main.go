@@ -15,7 +15,7 @@ var (
 
 func main() {
 	flag.Parse()
-	eVars := gomate.LoadDynamicEnvs()
+	eVars := gomate.LoadEnvironment()
 
 	switch os.Args[1] {
 

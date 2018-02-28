@@ -7,76 +7,60 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/pokstad/gomate"
 )
-
-func ParseRefernces() error {
-	filepath := eVars.CurrDoc
-
-	if !path.IsAbs(filepath) {
-		wd, err := os.Getwd()
-		if err != nil {
-			panic(err)
-		}
-		filepath = path.Join(wd, filepath)
-	}
-
-	refs, err := guruReferrers(context.TODO(), filepath, int(eVars.CurrLine), int(eVars.LineIndex))
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "unable to find referrers: %s", err)
-		os.Exit(1)
-	}
-
-	if err := htmlTempl.Execute(os.Stdout, refs); err != nil {
-		fmt.Fprintf(os.Stderr, "unable to render HTML: %s", err)
-		os.Exit(1)
-	}
-
-	fmt.Fprint(os.Stdout)
-
-	return
-}
-
-type referrer struct {
-	AbsPath  string
-	Line     int
-	Column   int
-	RelPath  string
-	Filename string
-	Excerpt  string
-}
 
 // captures absolute filepath, line number, column number, and source code clip
 var refRegex = regexp.MustCompile(`^(.*?):(\d+)\.(\d+)-\d+\.\d+:\s+(.*?)$`)
 
-func guruReferrers(ctx context.Context, filepath string, line, col int) ([]referrer, error) {
+// ParseReferrers uses guru to find code references to the specified symbol
+// pointed at in the file
+func ParseReferrers(ctx context.Context, env gomate.Environment) ([]gomate.CodeRef, error) {
+	filepath, err := filepath.Abs(env.CurrDoc)
+	if err != nil {
+		return nil, gomate.PushE(err, "unable to get working directory")
+	}
+
 	f, err := os.Open(filepath)
 	if err != nil {
-		return nil, fmt.Errorf("unable to open file: %s", filepath)
+		return nil, gomate.PushE(err, "unable to open file")
 	}
-	defer f.Close()
 
-	offset, err := calcOffset(f, line, col)
+	offset, err := gomate.CalcOffset(f, env.CurrLine, env.LineIndex)
 	if err != nil {
-		return nil, err
+		return nil, gomate.PushE(err, "unable to calculate offset")
 	}
+
+	if err := f.Close(); err != nil {
+		return nil, gomate.PushE(err, "unable to close file")
+	}
+
+	args := []string{
+		path.Join(env.GoBin(), "guru"),
+		"referrers",
+		fmt.Sprintf("%s:#%d", path.Base(filepath), offset),
+	}
+
+	log.Printf("running command: %s", args)
 
 	cmd := exec.CommandContext(
 		ctx,
-		"guru",
-		"referrers",
-		fmt.Sprintf("%s:#%d", path.Base(filepath), offset),
+		args[0],
+		args[1:]...,
 	)
 
-	output, err := cmd.Output()
+	output, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Printf("error from guru command: %s", err)
-		return nil, err
+		log.Printf("guru failed: %s", string(output))
+		return nil, gomate.PushE(err, "error from guru command")
 	}
 
-	var refs []referrer
+	var refs []gomate.CodeRef
 
 	log.Printf("Scan output: %s", string(output))
 
@@ -89,7 +73,7 @@ func guruReferrers(ctx context.Context, filepath string, line, col int) ([]refer
 
 		m := refRegex.FindStringSubmatch(line)
 		if len(m) < 4 {
-			return nil, fmt.Errorf("unable to scan guru output: %s", line)
+			return nil, gomate.PushE(err, "unable to scan guru output")
 		}
 
 		var pErr error // int parse error
@@ -106,7 +90,7 @@ func guruReferrers(ctx context.Context, filepath string, line, col int) ([]refer
 			return int(i)
 		}
 
-		refs = append(refs, referrer{
+		refs = append(refs, gomate.CodeRef{
 			AbsPath:  m[1],
 			Line:     atoi(m[2]),
 			Column:   atoi(m[3]),
@@ -116,7 +100,7 @@ func guruReferrers(ctx context.Context, filepath string, line, col int) ([]refer
 		})
 
 		if pErr != nil {
-			return nil, fmt.Errorf("unable to parse number: %s", pErr)
+			return nil, gomate.PushE(pErr, "unable to convert string to int")
 		}
 	}
 
