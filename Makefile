@@ -6,6 +6,13 @@ $(linter):
 
 SRC_FILES := $(shell find . -type f -name '*.go' -not -path "./vendor/*")
 
+guru := $(GOPATH)/bin/guru
+$(guru):
+	go get golang.org/x/tools/cmd/guru
+
+# tools are all external commands used by gomate
+tools: $(guru)
+
 .PHONY: lint
 lint: $(linter)
 	gofmt -d $(SRC_FILES)
@@ -13,5 +20,5 @@ lint: $(linter)
 	$(linter) -set_exit_status ./...
 
 .PHONY: test
-test:
+test: tools
 	go test -race ./...
