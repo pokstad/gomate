@@ -7,7 +7,7 @@ $(linter):
 SRC_FILES := $(shell find . -type f -name '*.go' -not -path "./vendor/*")
 
 .PHONY: lint
-lint: linter
+lint: $(linter)
 	gofmt -d $(SRC_FILES)
 	go vet ./...
 	$(linter) -set_exit_status ./...
