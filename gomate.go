@@ -33,6 +33,7 @@ var htmlTmpl = template.Must(template.New("").Funcs(
 	},
 ).Parse(errWarnInfoTmpl))
 
+// RenderHTML will render error, warning, and info code references
 func RenderHTML(w io.Writer, errors, warnings, infos []CodeRef) error {
 	return htmlTmpl.Execute(w, map[string][]CodeRef{
 		"errors":   errors,

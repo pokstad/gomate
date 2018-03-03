@@ -87,7 +87,7 @@ func ParseFile(env gomate.Environment) ([]Declaration, error) {
 				}
 			}
 		default:
-			return nil, fmt.Errorf("Unknown declaration @", decl.Pos())
+			return nil, fmt.Errorf("Unknown declaration @ %d", decl.Pos())
 		}
 	}
 
