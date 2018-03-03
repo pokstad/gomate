@@ -59,13 +59,7 @@ func LoadEnvironment() (env Environment, err error) {
 		SupportPath:   os.Getenv("TM_SUPPORT_PATH"),
 		TabSize:       parseInt(os.Getenv("TM_TAB_SIZE")),
 		// Static Vars
-		GoPath: func() string {
-			p, err := filepath.Abs(envOr("TM_GOPATH", "~/go"))
-			if err != nil {
-				panic(PushE(err, "absolute path is elusive"))
-			}
-			return p
-		}(),
+		GoPath: os.Getenv("GOPATH"),
 	}, nil
 }
 

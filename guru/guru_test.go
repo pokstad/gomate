@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/pokstad/gomate"
@@ -37,7 +38,7 @@ func TestParseReferrers(t *testing.T) {
 					CurrDoc:   "guru.go",
 					CurrLine:  tCase.line,
 					LineIndex: tCase.column,
-					GoPath:    "/Users/paulokstad/go",
+					GoPath:    os.Getenv("GOPATH"),
 				},
 			)
 			if err != nil {
