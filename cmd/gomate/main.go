@@ -5,10 +5,13 @@ import (
 	"encoding/json"
 	"log"
 	"os"
+	"os/exec"
 
 	"github.com/pokstad/gomate"
 	"github.com/pokstad/gomate/guru"
 	"github.com/pokstad/gomate/outline"
+
+	"golang.org/x/sync/errgroup"
 )
 
 func main() {
@@ -21,6 +24,21 @@ func main() {
 	}
 
 	switch os.Args[1] {
+
+	case "install":
+		// run deps in parallel to speed up installation
+		eg, ctx := errgroup.WithContext(ctx)
+
+		for _, cmd := range []*exec.Cmd{
+			exec.CommandContext(ctx, "go", "get", "golang.org/x/tools/cmd/guru"),
+		} {
+			eg.Go(cmd.Run)
+		}
+
+		// wait for all commands to finish running
+		if err := eg.Wait(); err != nil {
+			log.Fatalf("unable to install dependency: %s", err)
+		}
 
 	case "outline":
 		decs, err := outline.ParseFile(env)

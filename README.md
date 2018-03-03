@@ -1,13 +1,24 @@
-# gomate
-Gomate is a set of TextMate CLI tools for working with Go code
+# GoMate
+
+GoMate is a set of TextMate CLI tools for working with Go code. Inspired by 
+[syscrusher/golang.tmbundle](https://github.com/syscrusher/golang.tmbundle).
 
 # Install
 
+To get the gomate CLI:
+
 `go get -u github.com/pokstad/gomate`
 
-# Usage
+Then, install the tool's dependencies:
 
-In the Textmate Go bundle, create a new bundle command with the following script:
+`$GOPATH/bin/gomate install`
+
+# Bundle Install
+
+Until the bundle install is automated, the following needs to be done manually
+
+In the Textmate Go bundle, create a new bundle command with the following 
+script:
 
 ```
 #!/bin/bash
@@ -27,3 +38,5 @@ Also, make sure the following options are selected:
 # Roadmap
 
 - Style webpages using [ReMarkdown CSS](https://fvsch.github.io/remarkdown/)
+- Reimplement all features of
+	[syscrusher/golang.tmbundle](https://github.com/syscrusher/golang.tmbundle)
