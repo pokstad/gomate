@@ -21,12 +21,12 @@ var refRegex = regexp.MustCompile(`^(.*?):(\d+)\.(\d+)-\d+\.\d+:\s+(.*?)$`)
 // ParseReferrers uses guru to find code references to the specified symbol
 // pointed at in the file
 func ParseReferrers(ctx context.Context, env gomate.Environment) ([]gomate.CodeRef, error) {
-	filepath, err := filepath.Abs(env.CurrDoc)
+	fPath, err := filepath.Abs(env.CurrDoc)
 	if err != nil {
 		return nil, gomate.PushE(err, "unable to get working directory")
 	}
 
-	f, err := os.Open(filepath)
+	f, err := os.Open(fPath)
 	if err != nil {
 		return nil, gomate.PushE(err, "unable to open file")
 	}
@@ -43,7 +43,7 @@ func ParseReferrers(ctx context.Context, env gomate.Environment) ([]gomate.CodeR
 	args := []string{
 		path.Join(env.GoBin(), "guru"),
 		"referrers",
-		fmt.Sprintf("%s:#%d", path.Base(filepath), offset),
+		fmt.Sprintf("%s:#%d", path.Base(fPath), offset),
 	}
 
 	log.Printf("running command: %s", args)
@@ -90,11 +90,16 @@ func ParseReferrers(ctx context.Context, env gomate.Environment) ([]gomate.CodeR
 			return int(i)
 		}
 
+		relP, err := filepath.Rel(env.CurrDir, m[1])
+		if err != nil {
+			return nil, gomate.PushE(err, "unable to get relative path")
+		}
+
 		refs = append(refs, gomate.CodeRef{
 			AbsPath:  m[1],
 			Line:     atoi(m[2]),
 			Column:   atoi(m[3]),
-			RelPath:  m[1], // TODO: trim project path from front
+			RelPath:  relP, // TODO: trim project path from front
 			Filename: path.Base(m[1]),
 			Excerpt:  m[4],
 		})
