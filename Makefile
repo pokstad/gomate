@@ -1,7 +1,7 @@
 # Make 'dis shit!
 
 linter := $(GOPATH)/bin/golint
-linter:
+$(linter):
 	go get golang.org/x/lint/golint
 
 SRC_FILES := $(shell find . -type f -name '*.go' -not -path "./vendor/*")
