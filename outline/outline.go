@@ -12,18 +12,18 @@ import (
 	"github.com/pokstad/gomate"
 )
 
-// Declaration represents a top level declaration of the source code file
-type Declaration struct {
-	Label        string        `json:"label"`
-	Type         string        `json:"type"`
-	ReceiverType string        `json:"receiverType,omitempty"`
-	Start        token.Pos     `json:"start"`
-	End          token.Pos     `json:"end"`
-	Children     []Declaration `json:"children,omitempty"`
+// Decl represents a top level declaration of the source code file
+type Decl struct {
+	Label        string    `json:"label"`
+	Type         string    `json:"type"`
+	ReceiverType string    `json:"receiverType,omitempty"`
+	Start        token.Pos `json:"start"`
+	End          token.Pos `json:"end"`
+	Children     []Decl    `json:"children,omitempty"`
 }
 
 // ParseFile will parse a Go source code file for declarations
-func ParseFile(env gomate.Environment) ([]Declaration, error) {
+func ParseFile(env gomate.Env) ([]Decl, error) {
 	fset := token.NewFileSet()
 	parserMode := parser.ParseComments
 
@@ -32,7 +32,7 @@ func ParseFile(env gomate.Environment) ([]Declaration, error) {
 		return nil, fmt.Errorf("unable to parse declarations: %s", err)
 	}
 
-	declarations := []Declaration{}
+	declarations := []Decl{}
 
 	for _, decl := range fileAst.Decls {
 		switch decl := decl.(type) {
@@ -41,45 +41,45 @@ func ParseFile(env gomate.Environment) ([]Declaration, error) {
 			if err != nil {
 				return nil, fmt.Errorf("Failed to parse receiver type: %v", err)
 			}
-			declarations = append(declarations, Declaration{
+			declarations = append(declarations, Decl{
 				decl.Name.String(),
 				"function",
 				receiverType,
 				decl.Pos(),
 				decl.End(),
-				[]Declaration{},
+				[]Decl{},
 			})
 		case *ast.GenDecl:
 			for _, spec := range decl.Specs {
 				switch spec := spec.(type) {
 				case *ast.ImportSpec:
-					declarations = append(declarations, Declaration{
+					declarations = append(declarations, Decl{
 						spec.Path.Value,
 						"import",
 						"",
 						spec.Pos(),
 						spec.End(),
-						[]Declaration{},
+						[]Decl{},
 					})
 				case *ast.TypeSpec:
 					//TODO: Members if it's a struct or interface type?
-					declarations = append(declarations, Declaration{
+					declarations = append(declarations, Decl{
 						spec.Name.String(),
 						"type",
 						"",
 						spec.Pos(),
 						spec.End(),
-						[]Declaration{},
+						[]Decl{},
 					})
 				case *ast.ValueSpec:
 					for _, id := range spec.Names {
-						declarations = append(declarations, Declaration{
+						declarations = append(declarations, Decl{
 							id.Name,
 							"variable",
 							"",
 							id.Pos(),
 							id.End(),
-							[]Declaration{},
+							[]Decl{},
 						})
 					}
 				default:
@@ -91,8 +91,8 @@ func ParseFile(env gomate.Environment) ([]Declaration, error) {
 		}
 	}
 
-	return []Declaration{
-		Declaration{
+	return []Decl{
+		Decl{
 			fileAst.Name.String(),
 			"package",
 			"",

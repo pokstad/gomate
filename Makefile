@@ -10,8 +10,14 @@ guru := $(GOPATH)/bin/guru
 $(guru):
 	go get golang.org/x/tools/cmd/guru
 
+
 # tools are all external commands used by gomate
-tools: $(guru)
+tools: $(guru) $(linter)
+
+# assets folder contents are bundles with go executable
+cmd/gomate/assets.go: assets/*
+	go get github.com/pokstad/go-bindata/...
+	go-bindata -o cmd/gomate/assets.go assets
 
 .PHONY: lint
 lint: $(linter)

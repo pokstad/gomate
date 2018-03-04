@@ -52,7 +52,7 @@ func TestParseReferrers(t *testing.T) {
 
 			refs, err := guru.ParseReferrers(
 				context.Background(),
-				gomate.Environment{
+				gomate.Env{
 					CurrDoc:   "guru.go",
 					CurrLine:  tCase.line,
 					LineIndex: tCase.column,

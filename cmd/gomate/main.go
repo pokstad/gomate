@@ -2,19 +2,25 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"log"
 	"os"
 	"os/exec"
 
 	"github.com/pokstad/gomate"
 	"github.com/pokstad/gomate/guru"
+	"github.com/pokstad/gomate/html"
 	"github.com/pokstad/gomate/outline"
 
 	"golang.org/x/sync/errgroup"
 )
 
+var remarkdownCSS = MustAsset("assets/remarkdown.css")
+
 func main() {
+	if len(os.Args) < 2 {
+		log.Fatalf("must provide subcommand")
+	}
+
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -44,7 +50,7 @@ func main() {
 		decs, err := outline.ParseFile(env)
 		checkErr(err)
 
-		err = json.NewEncoder(os.Stdout).Encode(decs)
+		err = html.OutlineHTML(os.Stdout, env, decs, remarkdownCSS)
 		checkErr(err)
 
 	case "references":

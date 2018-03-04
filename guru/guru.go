@@ -20,7 +20,7 @@ var refRegex = regexp.MustCompile(`^(.*?):(\d+)\.(\d+)-\d+\.\d+:\s+(.*?)$`)
 
 // ParseReferrers uses guru to find code references to the specified symbol
 // pointed at in the file
-func ParseReferrers(ctx context.Context, env gomate.Environment) ([]gomate.CodeRef, error) {
+func ParseReferrers(ctx context.Context, env gomate.Env) ([]gomate.CodeRef, error) {
 	fPath, err := filepath.Abs(env.CurrDoc)
 	if err != nil {
 		return nil, gomate.PushE(err, "unable to get working directory")

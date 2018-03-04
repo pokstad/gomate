@@ -8,10 +8,10 @@ import (
 	"github.com/pokstad/gomate/outline"
 )
 
-const expectedOutline = `[{"label":"outline","type":"package","start":78,"end":2748,"children":[{"label":"\"bytes\"","type":"import","start":105,"end":112},{"label":"\"fmt\"","type":"import","start":114,"end":119},{"label":"\"go/ast\"","type":"import","start":121,"end":129},{"label":"\"go/format\"","type":"import","start":131,"end":142},{"label":"\"go/parser\"","type":"import","start":144,"end":155},{"label":"\"go/token\"","type":"import","start":157,"end":167},{"label":"\"github.com/pokstad/gomate\"","type":"import","start":170,"end":197},{"label":"Declaration","type":"type","start":280,"end":587},{"label":"ParseFile","type":"function","start":652,"end":2478},{"label":"getReceiverType","type":"function","start":2480,"end":2748}]}]`
+const expectedOutline = `[{"label":"outline","type":"package","start":78,"end":2618,"children":[{"label":"\"bytes\"","type":"import","start":105,"end":112},{"label":"\"fmt\"","type":"import","start":114,"end":119},{"label":"\"go/ast\"","type":"import","start":121,"end":129},{"label":"\"go/format\"","type":"import","start":131,"end":142},{"label":"\"go/parser\"","type":"import","start":144,"end":155},{"label":"\"go/token\"","type":"import","start":157,"end":167},{"label":"\"github.com/pokstad/gomate\"","type":"import","start":170,"end":197},{"label":"Decl","type":"type","start":273,"end":549},{"label":"ParseFile","type":"function","start":614,"end":2348},{"label":"getReceiverType","type":"function","start":2350,"end":2618}]}]`
 
 func TestParseFile(t *testing.T) {
-	d, err := outline.ParseFile(gomate.Environment{CurrDoc: "outline.go"})
+	d, err := outline.ParseFile(gomate.Env{CurrDoc: "outline.go"})
 	if err != nil {
 		t.Fatalf("unable to parse declarations: %s", err)
 	}

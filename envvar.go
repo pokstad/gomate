@@ -7,8 +7,8 @@ import (
 	"strings"
 )
 
-// Environment represents all textmate environment variables
-type Environment struct {
+// Env represents all textmate environment variables
+type Env struct {
 	// Dynamic Environment Variables
 	BundleDir     string   // the folder of the bundle that ran the item
 	CurrLine      uint     // text contents of current line
@@ -30,19 +30,19 @@ type Environment struct {
 }
 
 // GoBin returns the path to the $GOPATH/bin directory
-func (e Environment) GoBin() string {
+func (e Env) GoBin() string {
 	return filepath.Join(e.GoPath, "bin")
 }
 
 // LoadEnvironment sources all environment variables or populates defaults
-func LoadEnvironment() (env Environment, err error) {
+func LoadEnvironment() (env Env, err error) {
 	defer func() {
 		if e, ok := recover().(error); ok {
 			err = e
 		}
 	}()
 
-	return Environment{
+	return Env{
 		// Dynamic Vars
 		BundleDir:     os.Getenv("TM_BUNDLE_SUPPORT"),
 		CurrLine:      parseInt(os.Getenv("TM_CURRENT_LINE")),
