@@ -3,8 +3,7 @@
 linter := $(GOPATH)/bin/gometalinter.v2
 $(linter):
 	go get gopkg.in/alecthomas/gometalinter.v2
-	go get golang.org/x/lint/golint
-	go get github.com/dnephin/govet
+	gometalinter.v2 --install
 
 SRC_FILES := $(shell find . -type f -name '*.go' -not -path "./vendor/*")
 
