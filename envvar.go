@@ -29,23 +29,17 @@ type Env struct {
 	GoPath string // GOPATH variable
 }
 
-// GoBin returns the path to the $GOPATH/bin directory
-func (e Env) GoBin() string {
-	return filepath.Join(e.GoPath, "bin")
+// GoBin returns the path to an executable in the $GOPATH/bin directory
+func (e Env) GoBin(exe string) string {
+	return filepath.Join(e.GoPath, "bin", exe)
 }
 
 // LoadEnvironment sources all environment variables or populates defaults
 func LoadEnvironment() (env Env, err error) {
-	defer func() {
-		if e, ok := recover().(error); ok {
-			err = e
-		}
-	}()
-
 	return Env{
 		// Dynamic Vars
 		BundleDir:     os.Getenv("TM_BUNDLE_SUPPORT"),
-		CurrLine:      parseInt(os.Getenv("TM_CURRENT_LINE")),
+		CurrLine:      parseInt(os.Getenv("TM_LINE_NUMBER")),
 		CurrWord:      os.Getenv("TM_CURRENT_WORD"),
 		CurrDir:       os.Getenv("TM_DIRECTORY"),
 		CurrDoc:       os.Getenv("TM_FILEPATH"),
@@ -58,8 +52,7 @@ func LoadEnvironment() (env Env, err error) {
 		SoftTabs:      os.Getenv("TM_SOFT_TABS") == "YES",
 		SupportPath:   os.Getenv("TM_SUPPORT_PATH"),
 		TabSize:       parseInt(os.Getenv("TM_TAB_SIZE")),
-		// Static Vars
-		GoPath: os.Getenv("GOPATH"),
+		GoPath:        envOr("GOPATH", os.Getenv("TM_GOPATH")),
 	}, nil
 }
 

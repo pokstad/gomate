@@ -1,8 +1,9 @@
 # Make 'dis shit!
 
-linter := $(GOPATH)/bin/golint
+linter := $(GOPATH)/bin/gometalinter.v2
 $(linter):
-	go get golang.org/x/lint/golint
+	go get -u gopkg.in/alecthomas/gometalinter.v2
+	$(linter) install
 
 SRC_FILES := $(shell find . -type f -name '*.go' -not -path "./vendor/*")
 
@@ -19,11 +20,14 @@ cmd/gomate/assets.go: assets/*
 	go get github.com/pokstad/go-bindata/...
 	go-bindata -o cmd/gomate/assets.go assets
 
+$(GOPATH)/bin/gomate: cmd/gomate/assets.go
+	go install ./cmd/gomate
+
+install: $(GOPATH)/bin/gomate tools
+
 .PHONY: lint
 lint: $(linter)
-	gofmt -d $(SRC_FILES)
-	go vet ./...
-	$(linter) -set_exit_status ./...
+	$(linter) --config .gometalinter.json ./...
 
 .PHONY: test
 test: tools

@@ -3,44 +3,10 @@ package gomate
 import (
 	"bufio"
 	"fmt"
-	"html/template"
 	"io"
 	"net/url"
 	"strings"
 )
-
-const errWarnInfoTmpl = `
-<html>
-<head>
-</head>
-<body>
-{{ range $category, $coderefs := . }}
-<div>
-<h2> {{ $category }} </h2>
-<ul>
-{{ range $coderefs }}
-<li><a href="{{ print . | safeURL }}">{{ .Filename }}:{{ .Line }}:{{ .Column }}:</a> {{ .Excerpt }}</li>
-{{ end }}
-</ul>
-</div>
-{{ end }}
-</body></html>
-`
-
-var htmlTmpl = template.Must(template.New("").Funcs(
-	template.FuncMap{
-		"safeURL": func(u string) template.URL { return template.URL(u) },
-	},
-).Parse(errWarnInfoTmpl))
-
-// RenderHTML will render error, warning, and info code references
-func RenderHTML(w io.Writer, errors, warnings, infos []CodeRef) error {
-	return htmlTmpl.Execute(w, map[string][]CodeRef{
-		"errors":   errors,
-		"warnings": warnings,
-		"infos":    infos,
-	})
-}
 
 // CodeRef is a reference to a specific piece of code in a textmate document
 type CodeRef struct {

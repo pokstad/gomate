@@ -57,7 +57,7 @@ func main() {
 		refs, err := guru.ParseReferrers(ctx, env)
 		checkErr(err)
 
-		err = gomate.RenderHTML(os.Stdout, nil, nil, refs)
+		err = html.CodeRefsHTML(os.Stdout, "References", refs, remarkdownCSS)
 		checkErr(err)
 	}
 

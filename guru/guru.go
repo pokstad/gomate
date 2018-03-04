@@ -41,7 +41,7 @@ func ParseReferrers(ctx context.Context, env gomate.Env) ([]gomate.CodeRef, erro
 	}
 
 	args := []string{
-		path.Join(env.GoBin(), "guru"),
+		env.GoBin("guru"),
 		"referrers",
 		fmt.Sprintf("%s:#%d", path.Base(fPath), offset),
 	}

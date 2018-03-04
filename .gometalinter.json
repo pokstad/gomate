@@ -1,0 +1,10 @@
+{
+  "Enable": [
+	  "golint",
+	  "vet"
+  ],
+  "Vendor": true,
+  "Exclude": [
+	  "cmd/gomate/assets.go"
+  ]
+}
