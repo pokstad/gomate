@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/pokstad/gomate.svg?style=svg)](https://circleci.com/gh/pokstad/gomate)
+
 # GoMate
 
 GoMate is a set of TextMate CLI tools for working with Go code. Inspired by 
