@@ -15,30 +15,39 @@ Then, install the tool's dependencies:
 
 `$GOPATH/bin/gomate install`
 
-# Bundle Install
+# Usage
 
-Until the bundle install is automated, the following needs to be done manually
+Until the bundle install is automated, the following needs to be done manually for each bundle command script:
 
-In the Textmate Go bundle, create a new bundle command with the following 
-script:
+## Guru
+
+To find references to the symbol under the cursor:
 
 ```
 #!/bin/bash
-[[ -f "${TM_SUPPORT_PATH}/lib/bash_init.sh" ]] && . "${TM_SUPPORT_PATH}/lib/bash_init.sh"
-
-gomate -path ${TM_FILEPATH} -line ${TM_LINE_NUMBER} -column ${TM_LINE_INDEX}
+gomate references
 ```
 
-Also, make sure the following options are selected:
+- `Output:` is set to `Show in New Window`
+- `Format:` is `HTML`
+
+## Outline
+
+To generate an outline of the current source code file:
+
+To find references to the symbol under the cursor:
+
+```
+#!/bin/bash
+gomate outline
+```
 
 - `Input:` is set to `Selection`
 - `Format` is set to `Text`
 - `Output:` is set to `Show in New Window`
 - `Format:` is `HTML`
-- `Caret Placement:` is set to `Character Interpolation`
 
 # Roadmap
 
-- Style webpages using [ReMarkdown CSS](https://fvsch.github.io/remarkdown/)
 - Reimplement all features of
 	[syscrusher/golang.tmbundle](https://github.com/syscrusher/golang.tmbundle)
