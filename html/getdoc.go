@@ -20,14 +20,19 @@ const getdocTmpl = `
 	{{ with .Symbol }}
 		<div>
 			<h1>{{.Pkg}}.{{ .Name }}</h1>
-			<p><code>import {{ .Import }}<code></p>
+			<p>
+				<a href="{{ symbolRef . $baseDir | safeURL }}">
+					"{{ .Import }}".{{ .Pkg }}.{{ .Name }}
+				</a>
+			</p>
 			<p><code>{{ .Decl }}</code></p>
 			<div>{{ toHTML . }}</div>
-			<p><a href="{{ symbolRef . $baseDir | safeURL }}">Source</a></p>
+			
 		</div>
 	{{ end }}
+	<small>
 	<p>Stderr:</p>
-	<code>
+	<blockquote>
 	</body>
 </html>
 `

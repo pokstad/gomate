@@ -35,14 +35,26 @@ gomate references
 
 To generate an outline of the current source code file:
 
-To find references to the symbol under the cursor:
-
 ```
 #!/bin/bash
 gomate outline
 ```
 
 - `Input:` is set to `Selection`
+- `Format` is set to `Text`
+- `Output:` is set to `Show in New Window`
+- `Format:` is `HTML`
+
+## Get Documentation
+
+To view HTML documentation of the symbol under the cursor:
+
+```
+#!/bin/bash
+gomate getdoc
+```
+
+- `Input:` is set to `Document`
 - `Format` is set to `Text`
 - `Output:` is set to `Show in New Window`
 - `Format:` is `HTML`

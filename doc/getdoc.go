@@ -90,7 +90,8 @@ type Getter struct {
 	cmdPath string
 }
 
-// ObtainGetter will attempt to return a reference to the environment doc getter
+// ObtainGetter will attempt to return a reference to the environment doc
+// getter.
 func ObtainGetter(env gomate.Env) (Getter, error) {
 	return Getter{cmdPath: env.GoBin("gogetdoc")}, nil
 }
