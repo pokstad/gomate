@@ -3,6 +3,7 @@ package html
 import (
 	"html/template"
 	"io"
+	"strings"
 
 	"github.com/pokstad/gomate/doc"
 )
@@ -19,11 +20,13 @@ const getdocTmpl = `
 	{{ $baseDir := .BaseDir }}
 	{{ with .Symbol }}
 		<div>
-			<h1>"{{ .Import }}".{{ .Pkg }}.{{ .Name }}</h1>
-			<p>
+			<h1>
 				<a href="{{ symbolRef . $baseDir | safeURL }}">
-					<code>{{ .Decl }}</code>
+					"{{ .Import }}".{{ .Pkg }}.{{ .Name }}
 				</a>
+			</h1>
+			<p>
+				<pre>{{ .Decl }}</pre>	
 			</p>
 			<div>{{ toHTML . }}</div>
 		</div>
@@ -37,9 +40,10 @@ const getdocTmpl = `
 `
 
 var tmplFuncs = template.FuncMap{
-	"safeURL":   func(u string) template.URL { return template.URL(u) },
-	"toHTML":    func(s doc.Symbol) template.HTML { return template.HTML(s.HTML()) },
-	"symbolRef": func(s doc.Symbol, baseDir string) string { return s.CodeRef(baseDir).URL().String() },
+	"safeURL":    func(u string) template.URL { return template.URL(u) },
+	"breaklines": func(s string) template.HTML { return template.HTML(strings.Replace(s, "\n", "<br/>", -1)) },
+	"toHTML":     func(s doc.Symbol) template.HTML { return template.HTML(s.HTML()) },
+	"symbolRef":  func(s doc.Symbol, baseDir string) string { return s.CodeRef(baseDir).URL().String() },
 }
 
 var getdocHTMLTmpl = template.Must(template.New("").Funcs(tmplFuncs).Parse(getdocTmpl))
