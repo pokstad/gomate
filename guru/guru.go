@@ -1,6 +1,7 @@
 package guru
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"log"
@@ -15,23 +16,41 @@ import (
 	"github.com/pokstad/gomate"
 )
 
+type Guru struct {
+	cmdPath string
+}
+
+func ObtainGuru(env gomate.Env) (Guru, error) {
+	g := Guru{
+		cmdPath: env.GoBin("guru"),
+	}
+	return g, nil
+}
+
+func (g Guru) cmd(ctx context.Context, args ...string) (*exec.Cmd, *bytes.Buffer, *bytes.Buffer) {
+	stdoutBuf := new(bytes.Buffer)
+	stderrBuf := new(bytes.Buffer)
+
+	cmd := exec.CommandContext(ctx, g.cmdPath, args...)
+
+	cmd.Stderr = stderrBuf
+	cmd.Stdout = stdoutBuf
+
+	return cmd, stdoutBuf, stderrBuf
+}
+
 // captures absolute filepath, line number, column number, and source code clip
 var refRegex = regexp.MustCompile(`^(.*?):(\d+)\.(\d+)-\d+\.\d+:\s+(.*?)$`)
 
 // ParseReferrers uses guru to find code references to the specified symbol
-// pointed at in the file
-func ParseReferrers(ctx context.Context, env gomate.Env) ([]gomate.CodeRef, error) {
-	fPath, err := filepath.Abs(env.CurrDoc)
-	if err != nil {
-		return nil, gomate.PushE(err, "unable to get working directory")
-	}
-
-	f, err := os.Open(fPath)
+// pointed at by the cursor. Results are returned with respect to the drawer.
+func (g Guru) ParseReferrers(ctx context.Context, c gomate.Cursor, d gomate.Drawer) ([]gomate.CodeRef, error) {
+	f, err := os.Open(c.Doc)
 	if err != nil {
 		return nil, gomate.PushE(err, "unable to open file")
 	}
 
-	offset, err := gomate.CalcOffset(f, env.CurrLine, env.LineIndex)
+	offset, err := c.RuneOffset()
 	if err != nil {
 		return nil, gomate.PushE(err, "unable to calculate offset")
 	}
@@ -40,29 +59,30 @@ func ParseReferrers(ctx context.Context, env gomate.Env) ([]gomate.CodeRef, erro
 		return nil, gomate.PushE(err, "unable to close file")
 	}
 
-	args := []string{
-		env.GoBin("guru"),
-		"referrers",
-		fmt.Sprintf("%s:#%d", path.Base(fPath), offset),
-	}
-
-	log.Printf("running command: %s", args)
-
-	cmd := exec.CommandContext(
+	cmd, stdout, stderr := g.cmd(
 		ctx,
-		args[0],
-		args[1:]...,
+		"referrers",
+		fmt.Sprintf("%s:#%d", c.Doc, offset),
 	)
+	log.Printf("running command: %s", cmd.Args)
 
-	output, err := cmd.Output()
+	err = cmd.Run()
 	if err != nil {
-		log.Printf("guru failed: %s", string(output))
+		log.Printf("guru stderr: %s", string(stderr.Bytes()))
+
 		return nil, gomate.PushE(err, "error from guru command")
 	}
 
 	var refs []gomate.CodeRef
 
+	output := stdout.Bytes()
+
 	log.Printf("guru output: %s", string(output))
+
+	projDir := d.TopDir
+	if projDir == "" {
+		projDir = filepath.Dir(c.Doc)
+	}
 
 	for _, line := range strings.Split(string(output), "\n") {
 		// check if empty line
@@ -78,19 +98,19 @@ func ParseReferrers(ctx context.Context, env gomate.Env) ([]gomate.CodeRef, erro
 
 		var pErr error // int parse error
 
-		atoi := func(s string) int {
+		atoi := func(s string) uint {
 			var (
-				i int64
+				i uint64
 				e error
 			)
-			i, e = strconv.ParseInt(s, 10, 32)
+			i, e = strconv.ParseUint(s, 10, 32)
 			if e != nil {
 				pErr = e
 			}
-			return int(i)
+			return uint(i)
 		}
 
-		relP, err := filepath.Rel(env.CurrDir, m[1])
+		relP, err := filepath.Rel(projDir, m[1])
 		if err != nil {
 			return nil, gomate.PushE(err, "unable to get relative path")
 		}

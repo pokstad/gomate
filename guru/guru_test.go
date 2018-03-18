@@ -3,86 +3,120 @@ package guru_test
 import (
 	"context"
 	"os"
-	"path/filepath"
 	"testing"
 
 	"github.com/pokstad/gomate"
 	"github.com/pokstad/gomate/guru"
+	"github.com/pokstad/gomate/test"
 )
 
 func TestParseReferrers(t *testing.T) {
+	g, err := guru.ObtainGuru(gomate.Env{
+		GoPath: os.Getenv("GOPATH"),
+	})
+	if err != nil {
+		t.Fatalf("cannot obtain guru reference")
+	}
+
 	for _, tCase := range []struct {
-		fPath  string
-		line   uint
-		column uint
 		desc   string
+		cursor gomate.Cursor
+		drawer gomate.Drawer
 		expect []gomate.CodeRef
 	}{
 		{
-			fPath:  "guru.go",
-			line:   19,
-			column: 8,
-			desc:   "package variable refRegex",
+			desc: "type declaration for sample",
+			cursor: gomate.Cursor{
+				Doc:   test.MustGetAbsPath(t, "testdata/test.go"),
+				Line:  3,
+				Index: 9,
+			},
+			drawer: gomate.Drawer{
+				TopDir: func() string {
+					wd, err := os.Getwd()
+					if err != nil {
+						panic(err)
+					}
+					return wd
+				}(),
+			},
 			expect: []gomate.CodeRef{
 				{
-					AbsPath:  mustGetAbsPath("guru.go"),
-					Line:     19,
-					Column:   5,
-					RelPath:  "guru.go",
-					Filename: "guru.go",
-					Excerpt:  "references to var refRegex *regexp.Regexp",
+					AbsPath:  test.MustGetAbsPath(t, "testdata/test.go"),
+					Line:     3,
+					Column:   6,
+					RelPath:  "testdata/test.go",
+					Filename: "test.go",
+					Excerpt:  "references to type sample struct{}",
 				},
 				{
-					AbsPath:  mustGetAbsPath("guru.go"),
-					Line:     74,
-					Column:   8,
-					RelPath:  "guru.go",
-					Filename: "guru.go",
-					Excerpt:  "m := refRegex.FindStringSubmatch(line)",
+					AbsPath:  test.MustGetAbsPath(t, "testdata/test.go"),
+					Line:     5,
+					Column:   9,
+					RelPath:  "testdata/test.go",
+					Filename: "test.go",
+					Excerpt:  "func (s sample) Do() {}",
+				},
+				{
+					AbsPath:  test.MustGetAbsPath(t, "testdata/test.go"),
+					Line:     8,
+					Column:   2,
+					RelPath:  "testdata/test.go",
+					Filename: "test.go",
+					Excerpt:  "sample{}.Do()",
+				},
+			},
+		},
+		{
+			desc: "func main declaration with no drawer topdir",
+			cursor: gomate.Cursor{
+				Doc:   test.MustGetAbsPath(t, "testdata/test.go"),
+				Line:  7,
+				Index: 6,
+			},
+			drawer: gomate.Drawer{
+			// intentionally empty to simulate a single file (no project)
+			},
+			expect: []gomate.CodeRef{
+				{
+					AbsPath:  test.MustGetAbsPath(t, "testdata/test.go"),
+					Line:     7,
+					Column:   6,
+					RelPath:  "test.go",
+					Filename: "test.go",
+					Excerpt:  "references to func main()",
 				},
 			},
 		},
 	} {
-		tCase := tCase // rescope iterator
-
 		t.Run(tCase.desc, func(t *testing.T) {
-			t.Logf("Parsing %s at line %d column %d",
-				tCase.fPath, tCase.line, tCase.column,
+			t.Logf("Parsing %+v with drawer %+v",
+				tCase.cursor, tCase.drawer,
 			)
 
-			refs, err := guru.ParseReferrers(
+			refs, err := g.ParseReferrers(
 				context.Background(),
-				gomate.Env{
-					CurrDoc:   "guru.go",
-					CurrLine:  tCase.line,
-					LineIndex: tCase.column,
-					GoPath:    os.Getenv("GOPATH"),
-					CurrDir: func() string {
-						rp, err := os.Getwd()
-						if err != nil {
-							panic(err)
-						}
-						return rp
-					}(),
-				},
+				tCase.cursor,
+				tCase.drawer,
 			)
 			if err != nil {
 				t.Fatalf("cannot parse: %s", err)
 			}
 
+			t.Logf("refs: %#v", refs)
+
+			if len(tCase.expect) != len(refs) {
+				t.Fatalf("expected %d results but got %d",
+					len(tCase.expect), len(refs),
+				)
+			}
+
 			for i, e := range tCase.expect {
 				if refs[i] != e {
+					t.Logf("expected: %+v", e)
 					t.Fatalf("mismatch: %#v vs %#v", e, refs[i])
 				}
 			}
 		})
 	}
-}
-
-func mustGetAbsPath(relP string) string {
-	p, err := filepath.Abs(relP)
-	if err != nil {
-		panic(err)
-	}
-	return p
 }

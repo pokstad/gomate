@@ -29,10 +29,6 @@ const codeRefsTmpl = `
 </html>
 `
 
-var tmplFuncs = template.FuncMap{
-	"safeURL": func(u string) template.URL { return template.URL(u) },
-}
-
 var htmlTmpl = template.Must(template.New("").Funcs(tmplFuncs).Parse(codeRefsTmpl))
 
 // CodeRefsHTML will render a list of code references

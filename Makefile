@@ -25,9 +25,7 @@ $(GOPATH)/bin/gomate: cmd/gomate/assets.go
 
 install: $(GOPATH)/bin/gomate tools
 
-.PHONY: update
 update: cmd/gomate/assets.go README.md
-	go get github.com/ekalinin/github-markdown-toc.go
 
 .PHONY: lint
 lint: $(linter)

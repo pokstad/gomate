@@ -8,8 +8,6 @@ import (
 	"go/format"
 	"go/parser"
 	"go/token"
-
-	"github.com/pokstad/gomate"
 )
 
 // Decl represents a top level declaration of the source code file
@@ -23,11 +21,11 @@ type Decl struct {
 }
 
 // ParseFile will parse a Go source code file for declarations
-func ParseFile(env gomate.Env) ([]Decl, error) {
+func ParseFile(srcPath string) ([]Decl, error) {
 	fset := token.NewFileSet()
 	parserMode := parser.ParseComments
 
-	fileAst, err := parser.ParseFile(fset, env.CurrDoc, nil, parserMode)
+	fileAst, err := parser.ParseFile(fset, srcPath, nil, parserMode)
 	if err != nil {
 		return nil, fmt.Errorf("unable to parse declarations: %s", err)
 	}

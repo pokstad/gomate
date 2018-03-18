@@ -1,9 +1,7 @@
 package gomate
 
 import (
-	"bufio"
 	"fmt"
-	"io"
 	"net/url"
 	"strings"
 )
@@ -11,8 +9,8 @@ import (
 // CodeRef is a reference to a specific piece of code in a textmate document
 type CodeRef struct {
 	AbsPath  string
-	Line     int
-	Column   int
+	Line     uint
+	Column   uint
 	RelPath  string
 	Filename string
 	Excerpt  string
@@ -38,23 +36,4 @@ func (cf CodeRef) URL() *url.URL {
 // String returns the URL representation of a code ref
 func (cf CodeRef) String() string {
 	return cf.URL().String()
-}
-
-// CalcOffset will return the byte offset for the specified line and column of
-// the reader (e.g. source code file)
-func CalcOffset(r io.Reader, line, col uint) (uint, error) {
-	var (
-		s  = bufio.NewScanner(r)
-		bc = uint(0)
-	)
-
-	for i := uint(1); s.Scan() && i < line; i++ {
-		if err := s.Err(); err != nil {
-			return 0, fmt.Errorf("unable to scan file for offset: %s", err)
-		}
-
-		bc += uint(len(s.Text()) + 1) // add newline to text length
-	}
-
-	return bc + col, nil
 }

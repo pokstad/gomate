@@ -12,13 +12,13 @@ const outlineHTML = `
 <!doctype html>
 <html lang="en">
 <head>
-  <title>Outline for {{ .Env.CurrDoc }}</title>
+  <title>Outline for {{ .Env.Cursor.Doc }}</title>
   <style type="text/css">
 	{{ .Stylesheet }}
   </style>
 </head>
 <body class="remarkdown">
-  <h1>Outline: {{ .Env.CurrDoc }}</h1>
+  <h1>Outline: {{ .Env.Cursor.Doc }}</h1>
 	<ul>
 		{{ define "declaration" }}
 			<li>{{ .Label }}
