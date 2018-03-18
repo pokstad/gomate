@@ -32,12 +32,14 @@ type Position struct {
 	Column  uint
 }
 
+// HTML returns an HTML string representation of the doc string
 func (s Symbol) HTML() string {
 	b := new(bytes.Buffer)
 	doc.ToHTML(b, s.Doc, nil)
 	return b.String()
 }
 
+// CodeRef returns a code reference relative to the specified baseDir
 func (s Symbol) CodeRef(baseDir string) gomate.CodeRef {
 	if baseDir == "" {
 		baseDir = filepath.Dir(s.Pos.AbsPath)
@@ -61,6 +63,7 @@ func (s Symbol) CodeRef(baseDir string) gomate.CodeRef {
 
 var posRegex = regexp.MustCompile(`^"(.+?):(\d+):(\d+)"$`)
 
+// UnmarshalJSON conforms to json.Unmarshaler
 func (p *Position) UnmarshalJSON(data []byte) error {
 	m := posRegex.FindStringSubmatch(string(data))
 	if len(m) != 4 {
@@ -86,6 +89,7 @@ func (p *Position) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// Getter is a wrapper around the gogetdoc command
 type Getter struct {
 	cmdPath string
 }

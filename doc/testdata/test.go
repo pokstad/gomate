@@ -1,4 +1,4 @@
-/* Package main is a really dope package, yo. For realsies tho:
+/*Package main is a really dope package, yo. For realsies tho:
 
 WHY THIS PACKAGE IS DOPE
 

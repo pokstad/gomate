@@ -16,10 +16,12 @@ import (
 	"github.com/pokstad/gomate"
 )
 
+// Guru is a wrapper around the guru command
 type Guru struct {
 	cmdPath string
 }
 
+// ObtainGuru will use the environment information to find the guru command
 func ObtainGuru(env gomate.Env) (Guru, error) {
 	g := Guru{
 		cmdPath: env.GoBin("guru"),

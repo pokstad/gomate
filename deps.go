@@ -2,6 +2,7 @@ package gomate
 
 import "context"
 
+// Dep abstracts away a specific gomate dependency
 type Dep interface {
 	// Satisfied tells us if a dependency is satisfied
 	Satisfied(Env) (bool, error)
