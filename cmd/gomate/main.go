@@ -1,7 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"context"
+	"errors"
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -15,11 +18,16 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-var remarkdownCSS = MustAsset("assets/remarkdown.css")
+var (
+	remarkdownCSS = MustAsset("assets/remarkdown.css")
+	logBuf        = new(bytes.Buffer)
+)
 
 func main() {
+	log.SetOutput(logBuf)
+
 	if len(os.Args) < 2 {
-		log.Fatalf("must provide subcommand")
+		Fatal(errors.New("missing subcommand"))
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -80,6 +88,15 @@ func main() {
 
 func checkErr(err error) {
 	if err != nil {
-		log.Fatalf("fatal: %+v", err)
+		Fatal(err)
 	}
+}
+
+func Fatal(e error) {
+	err := html.ErrorHTML(os.Stdout, e, logBuf.String(), remarkdownCSS)
+	if err != nil {
+		fmt.Fprintf(os.Stdout, "unable to render error HTML: %s", err)
+		os.Exit(int(gomate.ExitCreateNewDoc))
+	}
+	os.Exit(int(gomate.ExitShowHTML))
 }

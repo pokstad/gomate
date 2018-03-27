@@ -31,10 +31,6 @@ const getdocTmpl = `
 			<div>{{ toHTML . }}</div>
 		</div>
 	{{ end }}
-	<hr/>
-	<small>
-		<p>Stderr:</p>
-		<blockquote>
 	</body>
 </html>
 `

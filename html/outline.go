@@ -18,7 +18,7 @@ const outlineHTML = `
   </style>
 </head>
 <body class="remarkdown">
-  <h1>Outline: {{ .Env.Cursor.Doc }}</h1>
+	<h1>Outline: {{ .Env.Cursor.Doc }}</h1>
 	<ul>
 		{{ define "declaration" }}
 			<li>{{ .Label }}

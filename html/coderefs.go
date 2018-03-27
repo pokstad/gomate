@@ -24,7 +24,6 @@ const codeRefsTmpl = `
 				{{ end }}
 			</ul>
 		</div>
-		<blockquote>
 	</body>
 </html>
 `

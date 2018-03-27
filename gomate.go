@@ -6,6 +6,20 @@ import (
 	"strings"
 )
 
+type ExitCode int
+
+const (
+	ExitDiscard ExitCode = iota + 200
+	ExitReplaceText
+	ExitReplaceDocument
+	ExitInsertText
+	ExitInsertSnippet
+	ExitShowHTML
+	ExitShowToolTip
+	ExitCreateNewDoc
+	ExitInsertSnipNoIdent
+)
+
 // CodeRef is a reference to a specific piece of code in a textmate document
 type CodeRef struct {
 	AbsPath  string
