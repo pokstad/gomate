@@ -20,7 +20,7 @@ const codeRefsTmpl = `
 			<h1> {{ .Title }} </h1>
 			<ul>
 				{{ range .Refs }}
-					<li><a href="{{ print . | safeURL }}">{{ .Filename }}:{{ .Line }}:{{ .Column }}:</a> {{ .Excerpt }}</li>
+					<li><a href="{{ print . | safeURL }}">{{ .Filename }}:{{ .Line }}:{{ .Column }}</a> : {{ .Excerpt }}</li>
 				{{ end }}
 			</ul>
 		</div>

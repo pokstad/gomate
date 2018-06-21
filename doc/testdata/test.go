@@ -15,7 +15,7 @@ import "fmt"
 //
 // Loudness of a meow may determine how we categorize a kitty:
 //
-// 	m0 := Meow{Loudness:5} // medium loudness kitty
+//  m0 := Meow{Loudness:5} // medium loudness kitty
 //  m1 := Meow{Loudness:1} // low loudness kitty
 type Meow struct {
 	Loudness uint   // how loud is this meow?

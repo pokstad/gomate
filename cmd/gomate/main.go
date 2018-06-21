@@ -19,6 +19,7 @@ import (
 )
 
 var (
+	// ASSET(markdown.css): used for styling the HTML
 	remarkdownCSS = MustAsset("assets/remarkdown.css")
 	logBuf        = new(bytes.Buffer)
 )
