@@ -11,9 +11,12 @@ guru := $(GOPATH)/bin/guru
 $(guru):
 	go get golang.org/x/tools/cmd/guru
 
+gogetdoc := $(GOPATH)/bin/gogetdoc
+$(gogetdoc):
+	go get github.com/zmb3/gogetdoc
 
 # tools are all external commands used by gomate
-tools: $(guru) $(linter)
+tools: $(guru) $(linter) $(gogetdoc)
 
 # assets folder contents are bundles with go executable
 cmd/gomate/assets.go: assets/*
