@@ -28,7 +28,7 @@ func main() {
 	log.SetOutput(logBuf)
 
 	if len(os.Args) < 2 {
-		Fatal(errors.New("missing subcommand"))
+		fatal(errors.New("missing subcommand"))
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -89,11 +89,11 @@ func main() {
 
 func checkErr(err error) {
 	if err != nil {
-		Fatal(err)
+		fatal(err)
 	}
 }
 
-func Fatal(e error) {
+func fatal(e error) {
 	err := html.ErrorHTML(os.Stdout, e, logBuf.String(), remarkdownCSS)
 	if err != nil {
 		fmt.Fprintf(os.Stdout, "unable to render error HTML: %s", err)

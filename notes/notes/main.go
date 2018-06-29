@@ -1,4 +1,4 @@
-/* notes is a utility that recursively scans all note markings in a directory
+/*notes is a utility that recursively scans all note markings in a directory
 and returns a representation of those notes mapped by tag and ID to the actual
 note and location. This representation essentially looks like this:
 

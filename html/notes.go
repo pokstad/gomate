@@ -43,8 +43,7 @@ var (
 	notesTmpl = template.Must(template.New("").Parse(notesHTML))
 )
 
-// OutlineHTML will create a recursive outline of all symbols in the current
-// source code file
+// RenderNotes will create a recursive outline of all godoc notes in the project
 func RenderNotes(w io.Writer, env gomate.Env, decs []outline.Decl, css []byte) error {
 	return outlineTmpl.Execute(w, struct {
 		Stylesheet   template.CSS
