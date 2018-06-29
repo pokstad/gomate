@@ -13,6 +13,7 @@ import (
 	"github.com/pokstad/gomate"
 )
 
+// Note is a godoc note found in Go source code comments
 type Note struct {
 	Tag  string
 	UID  string
