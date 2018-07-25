@@ -80,5 +80,6 @@ External dependencies: [gogetdoc](https://github.com/zmb3/gogetdoc)
 ## Roadmap
 
 - Testing coverage and advanced options for individual test functions (similar to VSCode code lense)
-- Reimplement all features of
+- Reimplement all features of existing Textmate plugin
 	[syscrusher/golang.tmbundle](https://github.com/syscrusher/golang.tmbundle)
+- Web service to support rich contexts that allow interactions via AJAX calls

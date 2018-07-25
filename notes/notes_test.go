@@ -7,7 +7,7 @@ import (
 )
 
 func TestAllNotes(t *testing.T) {
-	allNotes, err := notes.AllNotes("../", "")
+	allNotes, err := notes.AllNotes("testdata", "", notes.WithTestdata())
 	if err != nil {
 		t.Fatalf("unable to parse all notes: %s", err)
 	}

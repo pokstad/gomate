@@ -21,16 +21,38 @@ type Note struct {
 	Loc  gomate.CodeRef
 }
 
+// String returns a simple representation of a note
 func (n Note) String() string {
 	return fmt.Sprintf("%s: %s", n.UID, n.Body)
 }
 
+type config struct {
+	testdata bool
+}
+
+// Option allows customizing the note function default behavior
+type Option func(*config)
+
+// WithTestdata will override the default behavior of skipping the testdata
+// folder.
+func WithTestdata() Option {
+	return func(c *config) {
+		c.testdata = true
+	}
+}
+
 // AllNotes returns all notes for all packages in a directory
-func AllNotes(target, base string) (map[string][]Note, error) {
+func AllNotes(target, base string, opts ...Option) (map[string][]Note, error) {
 	var (
 		notes   = make(map[string][]Note)
 		fileSet = token.NewFileSet()
 	)
+
+	var cfg config
+
+	for _, opt := range opts {
+		opt(&cfg)
+	}
 
 	pkgPaths := make(map[string]map[string]*ast.Package)
 
@@ -47,7 +69,9 @@ func AllNotes(target, base string) (map[string][]Note, error) {
 				return nil // skip files
 
 			case info.Name() == "testdata":
-				return filepath.SkipDir // skip fixtures
+				if !cfg.testdata {
+					return filepath.SkipDir // skip fixtures
+				}
 
 			case info.Name() == "vendor":
 				return filepath.SkipDir // skip vendored deps
@@ -75,12 +99,15 @@ func AllNotes(target, base string) (map[string][]Note, error) {
 				for _, n := range ns {
 					t := fileSet.Position(n.Pos)
 
-					relPath, err := filepath.Rel(base, t.Filename)
-					if err != nil {
-						return nil, gomate.PushE(
-							err,
-							"can't determine relative path",
-						)
+					relPath := t.Filename
+					if base != "" {
+						relPath, err = filepath.Rel(base, t.Filename)
+						if err != nil {
+							return nil, gomate.PushE(
+								err,
+								"can't determine relative path",
+							)
+						}
 					}
 
 					absPath, err := filepath.Abs(t.Filename)

@@ -64,8 +64,6 @@ func main() {
 		log.Fatalf("unable to scan notes from target %s: %s", target, err)
 	}
 
-	print(*output)
-
 	switch *output {
 
 	case outputJSON:
