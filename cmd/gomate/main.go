@@ -13,6 +13,7 @@ import (
 	"github.com/pokstad/gomate/doc"
 	"github.com/pokstad/gomate/guru"
 	"github.com/pokstad/gomate/html"
+	"github.com/pokstad/gomate/notes"
 	"github.com/pokstad/gomate/outline"
 
 	"golang.org/x/sync/errgroup"
@@ -81,6 +82,13 @@ func main() {
 		checkErr(err)
 
 		err = html.SymbolDocHTML(os.Stdout, env.Drawer.TopDir, symbol, remarkdownCSS)
+		checkErr(err)
+
+	case "notes":
+		pkgNotes, err := notes.AllNotes(env.Drawer.TopDir, env.Drawer.TopDir)
+		checkErr(err)
+
+		err = html.RenderNotes(os.Stdout, env, pkgNotes, remarkdownCSS)
 		checkErr(err)
 
 	}

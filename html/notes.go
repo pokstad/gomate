@@ -5,7 +5,7 @@ import (
 	"io"
 
 	"github.com/pokstad/gomate"
-	"github.com/pokstad/gomate/outline"
+	"github.com/pokstad/gomate/notes"
 )
 
 const notesHTML = `
@@ -18,21 +18,16 @@ const notesHTML = `
   </style>
 </head>
 <body class="remarkdown">
-	<h1>Outline: {{ .Env.Cursor.Doc }}</h1>
+	<h1>Notes: {{ .Env.Drawer.TopDir }}</h1>
 	<ul>
-		{{ define "declaration" }}
-			<li>{{ .Label }}
-				{{ if gt (len .Children) 0}}
-					<ul>
-						{{ range .Children }}
-						{{ template "declaration" . }}
-						{{ end }}
-					</ul>
-				{{ end }}
-			</li>
-		{{ end }}
-		{{ range .Declarations }}
-			{{ template "declaration" . }}
+		{{ range $pkg, $notes := .Notes }}
+  		<li>{{ $pkg }}
+        <ul>
+  			{{ range $notes }}
+          <li> <a href={{ print .Loc | safeURL }}>{{ .UID }}</a> : {{ .Body }}</li>
+  			{{ end }}
+        </ul>
+  		</li>
 		{{ end }}
 	<ul>
 </body>
@@ -40,18 +35,18 @@ const notesHTML = `
 `
 
 var (
-	notesTmpl = template.Must(template.New("").Parse(notesHTML))
+	notesTmpl = template.Must(template.New("").Funcs(tmplFuncs).Parse(notesHTML))
 )
 
 // RenderNotes will create a recursive outline of all godoc notes in the project
-func RenderNotes(w io.Writer, env gomate.Env, decs []outline.Decl, css []byte) error {
-	return outlineTmpl.Execute(w, struct {
-		Stylesheet   template.CSS
-		Env          gomate.Env
-		Declarations []outline.Decl
+func RenderNotes(w io.Writer, env gomate.Env, pkgNotes map[string][]notes.Note, css []byte) error {
+	return notesTmpl.Execute(w, struct {
+		Stylesheet template.CSS
+		Env        gomate.Env
+		Notes      map[string][]notes.Note
 	}{
-		Stylesheet:   template.CSS(string(css)),
-		Env:          env,
-		Declarations: decs,
+		Stylesheet: template.CSS(string(css)),
+		Env:        env,
+		Notes:      pkgNotes,
 	})
 }
