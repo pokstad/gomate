@@ -46,10 +46,16 @@ func main() {
 		// install deps in parallel to speed up installation
 		eg, ctx := errgroup.WithContext(ctx)
 
-		for _, cmd := range []*exec.Cmd{
-			exec.CommandContext(ctx, "go", "get", "golang.org/x/tools/cmd/guru"),
+		for _, repo := range []string{
+			"golang.org/x/tools/cmd/guru",
+			"github.com/zmb3/gogetdoc",
+			"github.com/nsf/gocode",
+			"github.com/rogpeppe/godef",
+			"golang.org/x/tools/cmd/godoc",
+			"github.com/alecthomas/gometalinter",
+			"golang.org/x/lint/golint",
 		} {
-			eg.Go(cmd.Run)
+			eg.Go(exec.CommandContext(ctx, "go", "get", "-u", repo).Run)
 		}
 
 		// wait for all commands to finish running
