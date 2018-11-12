@@ -15,6 +15,7 @@ import (
 	"github.com/pokstad/gomate"
 )
 
+// InputDialog is a simple dialog that requests text input from the user
 type InputDialog struct {
 	Title   string // title on top of dialog
 	Prompt  string // prompt to show user
@@ -28,6 +29,7 @@ func (id InputDialog) plistParams() string {
 	)
 }
 
+// Show will display the textmate dialog and retrieve the user input
 func (id InputDialog) Show(ctx context.Context, env gomate.Env) (string, error) {
 	cmd := exec.CommandContext(
 		ctx,

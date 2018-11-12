@@ -9,6 +9,7 @@ import (
 	"github.com/pokstad/gomate"
 )
 
+// InputDialog is how we request the new symbol identifier from the user
 type InputDialog interface {
 	// Show will return a user defined text or error
 	Show(context.Context, gomate.Env) (string, error)
