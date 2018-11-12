@@ -11,10 +11,12 @@ import (
 
 	"github.com/pokstad/gomate"
 	"github.com/pokstad/gomate/doc"
+	"github.com/pokstad/gomate/gui"
 	"github.com/pokstad/gomate/guru"
 	"github.com/pokstad/gomate/html"
 	"github.com/pokstad/gomate/notes"
 	"github.com/pokstad/gomate/outline"
+	"github.com/pokstad/gomate/rename"
 
 	"golang.org/x/sync/errgroup"
 )
@@ -54,13 +56,15 @@ func main() {
 			"golang.org/x/tools/cmd/godoc",
 			"github.com/alecthomas/gometalinter",
 			"golang.org/x/lint/golint",
+			"golang.org/x/tools/cmd/gorename",
+			"golang.org/x/tools/cmd/goimports",
 		} {
 			eg.Go(exec.CommandContext(ctx, "go", "get", "-u", repo).Run)
 		}
 
 		// wait for all commands to finish running
 		if err := eg.Wait(); err != nil {
-			log.Fatalf("unable to install dependency: %s", err)
+			checkErr(err)
 		}
 
 	case "outline":
@@ -95,6 +99,15 @@ func main() {
 		checkErr(err)
 
 		err = html.RenderNotes(os.Stdout, env, pkgNotes, remarkdownCSS)
+		checkErr(err)
+
+	case "rename":
+		renameDialog := gui.InputDialog{
+			Default: env.Cursor.Word,
+			Prompt:  fmt.Sprintf(`Rename \'%s\' to what?`, env.Cursor.Word),
+			Title:   "gorename",
+		}
+		err := rename.AtOffset(ctx, renameDialog, env)
 		checkErr(err)
 
 	}

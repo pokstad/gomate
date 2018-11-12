@@ -90,6 +90,7 @@ type Env struct {
 
 	// Static Environment Variables
 	GoPath string // GOPATH variable
+	Dialog string // Path to Textmate dialog helper app
 }
 
 // GoBin returns the path to an executable in the $GOPATH/bin directory
@@ -121,6 +122,7 @@ func LoadEnvironment() (env Env, err error) {
 		SupportPath: os.Getenv("TM_SUPPORT_PATH"),
 		TabSize:     parseInt(os.Getenv("TM_TAB_SIZE")),
 		GoPath:      envOr("TM_GOPATH", os.Getenv("GOPATH")),
+		Dialog:      os.Getenv("DIALOG"),
 	}, nil
 }
 
