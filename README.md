@@ -43,7 +43,7 @@ gomate references
 ```
 
 - `Output:` is set to `Show in New Window`
-- `Format:` is `HTML`
+	- `Format:` is `HTML`
 
 External dependencies: [guru](https://golang.org/x/tools/cmd/guru)
 
@@ -57,9 +57,9 @@ gomate outline
 ```
 
 - `Input:` is set to `Selection`
-- `Format` is set to `Text`
+	- `Format` is set to `Text`
 - `Output:` is set to `Show in New Window`
-- `Format:` is `HTML`
+	- `Format:` is `HTML`
 
 ### Get Documentation
 
@@ -71,11 +71,39 @@ gomate getdoc
 ```
 
 - `Input:` is set to `Document`
-- `Format` is set to `Text`
+	- `Format` is set to `Text`
 - `Output:` is set to `Show in New Window`
-- `Format:` is `HTML`
+	- `Format:` is `HTML`
 
 External dependencies: [gogetdoc](https://github.com/zmb3/gogetdoc)
+
+### Notes
+
+To view a list of gonotes in the current project:
+
+```
+#!/bin/bash
+gomate notes
+```
+
+- Input: Nothing
+- Ouput: Show in New Window
+	- Format: HTML
+
+
+### Rename
+
+To rename an identifier:
+
+```
+#!/bin/bash
+gomate rename
+```
+
+- Input: Nothing
+- Output: Discard
+
+External dependencies: [gorename](golang.org/x/tools/cmd/gorename)
 
 ## Roadmap
 
