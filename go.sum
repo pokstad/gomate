@@ -1,0 +1,8 @@
+github.com/mattn/go-plist v0.0.0-20170211130839-2569f8ead83a h1:MKlkIlFFo5OdN/A7qYGaf6kQuXKLX7DuYLtTqRVhOh4=
+github.com/mattn/go-plist v0.0.0-20170211130839-2569f8ead83a/go.mod h1:c3gnIAJD2rglVt+C27TcvWhMDX/MRNkm78pFGzqkDno=
+github.com/pkg/errors v0.8.0 h1:WdK/asTD0HN+q6hsWO3/vpuAkAr+tw6aNJNDFFf0+qw=
+github.com/pkg/errors v0.8.0/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
+golang.org/x/net v0.0.0-20180301190904-22ae77b79946 h1:Ovdd3aDjGOBx9xVuWVwMZWXbFQ3542Ve+TGnNVoE/Mc=
+golang.org/x/net v0.0.0-20180301190904-22ae77b79946/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
+golang.org/x/sync v0.0.0-20171101214715-fd80eb99c8f6 h1:UWryf0el5qwmY5cBTqoyWVa4RPACJRSurjt+KoT0fF0=
+golang.org/x/sync v0.0.0-20171101214715-fd80eb99c8f6/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
