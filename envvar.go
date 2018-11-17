@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+
+	"github.com/pkg/errors"
 )
 
 // Scope refers to the type of symbol under the cursor as determined by the
@@ -57,13 +59,13 @@ func CalcOffset(r io.Reader, line, col uint) (uint, error) {
 func (c Cursor) RuneOffset() (uint, error) {
 	f, err := os.Open(c.Doc)
 	if err != nil {
-		return 0, PushE(err, "can't open file to determine offset")
+		return 0, errors.Wrap(err, "can't open file to determine offset")
 	}
 	defer f.Close()
 
 	offset, err := CalcOffset(f, c.Line, c.Index)
 	if err != nil {
-		return 0, PushE(err, "unable to calculate offset")
+		return 0, errors.Wrap(err, "unable to calculate offset")
 	}
 
 	return offset, nil

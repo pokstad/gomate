@@ -10,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/pkg/errors"
 	"github.com/pokstad/gomate"
 )
 
@@ -80,7 +81,7 @@ func AllNotes(target, base string, opts ...Option) (map[string][]Note, error) {
 
 			pkgs, err := parser.ParseDir(fileSet, p, nil, parser.ParseComments)
 			if err != nil && pkgs == nil {
-				return gomate.PushE(err, "unable to parse dir")
+				return errors.Wrap(err, "unable to parse dir")
 			}
 
 			pkgPaths[p] = pkgs
@@ -89,7 +90,7 @@ func AllNotes(target, base string, opts ...Option) (map[string][]Note, error) {
 		},
 	)
 	if err != nil {
-		return nil, gomate.PushE(err, "unable to walk directory")
+		return nil, errors.Wrap(err, "unable to walk directory")
 	}
 
 	for _, pkgs := range pkgPaths {
@@ -103,7 +104,7 @@ func AllNotes(target, base string, opts ...Option) (map[string][]Note, error) {
 					if base != "" {
 						relPath, err = filepath.Rel(base, t.Filename)
 						if err != nil {
-							return nil, gomate.PushE(
+							return nil, errors.Wrap(
 								err,
 								"can't determine relative path",
 							)
@@ -112,7 +113,7 @@ func AllNotes(target, base string, opts ...Option) (map[string][]Note, error) {
 
 					absPath, err := filepath.Abs(t.Filename)
 					if err != nil {
-						return nil, gomate.PushE(err, "can't get absolute path")
+						return nil, errors.Wrap(err, "can't get absolute path")
 					}
 
 					notes[m] = append(notes[m], Note{

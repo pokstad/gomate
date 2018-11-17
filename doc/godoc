@@ -72,12 +72,12 @@ func (p *Position) UnmarshalJSON(data []byte) error {
 
 	line, err := strconv.Atoi(m[2])
 	if err != nil {
-		return gomate.PushE(err, "unable to parse line number: "+err.Error())
+		return errors.Wrap(err, "unable to parse line number: "+err.Error())
 	}
 
 	index, err := strconv.Atoi(m[3])
 	if err != nil {
-		return gomate.PushE(err, "unable to parse index number: "+err.Error())
+		return errors.Wrap(err, "unable to parse index number: "+err.Error())
 	}
 
 	*p = Position{
@@ -104,7 +104,7 @@ func ObtainGetter(env gomate.Env) (Getter, error) {
 func (g Getter) LookupSymbol(ctx context.Context, c gomate.Cursor) (Symbol, error) {
 	offset, err := c.RuneOffset()
 	if err != nil {
-		return Symbol{}, gomate.PushE(err, "can't determine offset")
+		return Symbol{}, errors.Wrap(err, "can't determine offset")
 	}
 
 	cmd := exec.CommandContext(
@@ -128,7 +128,7 @@ func (g Getter) LookupSymbol(ctx context.Context, c gomate.Cursor) (Symbol, erro
 	err = cmd.Run()
 	if err != nil {
 		log.Printf("gogetdoc stderr: %s", stderr.String())
-		return Symbol{}, gomate.PushE(err, "unable to run gogetdoc")
+		return Symbol{}, errors.Wrap(err, "unable to run gogetdoc")
 	}
 
 	var d Symbol
@@ -136,7 +136,7 @@ func (g Getter) LookupSymbol(ctx context.Context, c gomate.Cursor) (Symbol, erro
 	log.Printf("decoding json from stdout: %s", stdout.String())
 
 	if err := json.NewDecoder(stdout).Decode(&d); err != nil {
-		return Symbol{}, gomate.PushE(err, "unable to decode gogetdoc JSON output")
+		return Symbol{}, errors.Wrap(err, "unable to decode gogetdoc JSON output")
 	}
 
 	return d, nil

@@ -5,7 +5,7 @@ import (
 	"html/template"
 	"io"
 
-	"github.com/pokstad/gomate"
+	"github.com/pkg/errors"
 )
 
 const errTmpl = `
@@ -43,7 +43,7 @@ func ErrorHTML(w io.Writer, err error, logs string, css []byte) error {
 	}{
 		Title:       "error occurred",
 		ErrorSimple: err.Error(),
-		ErrorDetail: fmt.Sprintf("%+v", gomate.Cause(err)),
+		ErrorDetail: fmt.Sprintf("%+v", errors.Cause(err)),
 		Logs:        logs,
 		Stylesheet:  template.CSS(string(css)),
 	})

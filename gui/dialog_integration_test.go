@@ -23,7 +23,35 @@ func TestInputDialog(t *testing.T) {
 		Title:   "Lazy Sunday",
 		Prompt:  "What would you like to do?",
 		Default: "nothing",
-	}.ShowInputDialog(
+	}.Show(
+		context.Background(),
+		env,
+	)
+	if err != nil {
+		t.Fatalf("unable to obtain response from dialog: %s", err)
+	}
+
+	t.Logf("resp: %s", resp)
+}
+
+func TestCompleteDialog(t *testing.T) {
+	env, err := gomate.LoadEnvironment()
+	if err != nil {
+		t.Fatalf("unable to load env vars: %s", err)
+	}
+
+	resp, err := gui.CompleteDialog{
+		Choices: []gui.Choice{
+			{
+				Display: "choice 1",
+				Insert:  "you picked poop 💩",
+			},
+			{
+				Display: "choice 2",
+				Insert:  "you picked eggplant 🍆",
+			},
+		},
+	}.Show(
 		context.Background(),
 		env,
 	)

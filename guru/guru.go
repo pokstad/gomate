@@ -13,6 +13,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/pkg/errors"
 	"github.com/pokstad/gomate"
 )
 
@@ -49,16 +50,16 @@ var refRegex = regexp.MustCompile(`^(.*?):(\d+)\.(\d+)-\d+\.\d+:\s+(.*?)$`)
 func (g Guru) ParseReferrers(ctx context.Context, c gomate.Cursor, d gomate.Drawer) ([]gomate.CodeRef, error) {
 	f, err := os.Open(c.Doc)
 	if err != nil {
-		return nil, gomate.PushE(err, "unable to open file")
+		return nil, errors.Wrap(err, "unable to open file")
 	}
 
 	offset, err := c.RuneOffset()
 	if err != nil {
-		return nil, gomate.PushE(err, "unable to calculate offset")
+		return nil, errors.Wrap(err, "unable to calculate offset")
 	}
 
 	if err := f.Close(); err != nil {
-		return nil, gomate.PushE(err, "unable to close file")
+		return nil, errors.Wrap(err, "unable to close file")
 	}
 
 	cmd, stdout, stderr := g.cmd(
@@ -72,7 +73,7 @@ func (g Guru) ParseReferrers(ctx context.Context, c gomate.Cursor, d gomate.Draw
 	if err != nil {
 		log.Printf("guru stderr: %s", string(stderr.Bytes()))
 
-		return nil, gomate.PushE(err, "error from guru command")
+		return nil, errors.Wrap(err, "error from guru command")
 	}
 
 	var refs []gomate.CodeRef
@@ -95,7 +96,7 @@ func (g Guru) ParseReferrers(ctx context.Context, c gomate.Cursor, d gomate.Draw
 
 		m := refRegex.FindStringSubmatch(line)
 		if len(m) < 4 {
-			return nil, gomate.PushE(err, "unable to scan guru output")
+			return nil, errors.Wrap(err, "unable to scan guru output")
 		}
 
 		var pErr error // int parse error
@@ -114,7 +115,7 @@ func (g Guru) ParseReferrers(ctx context.Context, c gomate.Cursor, d gomate.Draw
 
 		relP, err := filepath.Rel(projDir, m[1])
 		if err != nil {
-			return nil, gomate.PushE(err, "unable to get relative path")
+			return nil, errors.Wrap(err, "unable to get relative path")
 		}
 
 		refs = append(refs, gomate.CodeRef{
@@ -127,7 +128,7 @@ func (g Guru) ParseReferrers(ctx context.Context, c gomate.Cursor, d gomate.Draw
 		})
 
 		if pErr != nil {
-			return nil, gomate.PushE(pErr, "unable to convert string to int")
+			return nil, errors.Wrap(pErr, "unable to convert string to int")
 		}
 	}
 
