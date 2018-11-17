@@ -123,7 +123,10 @@ func checkErr(err error) {
 func fatal(e error) {
 	err := html.ErrorHTML(os.Stdout, e, logBuf.String(), remarkdownCSS)
 	if err != nil {
-		fmt.Fprintf(os.Stdout, "unable to render error HTML: %s", err)
+		_, err := fmt.Fprintf(os.Stdout, "unable to render error HTML: %s", err)
+		if err != nil {
+			log.Fatalf("unable to print error HTML to file: %s", err)
+		}
 		os.Exit(int(gomate.ExitCreateNewDoc))
 	}
 	os.Exit(int(gomate.ExitShowHTML))

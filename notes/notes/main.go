@@ -53,7 +53,10 @@ func main() {
 	flag.Parse()
 
 	if flag.NArg() != 1 {
-		fmt.Fprintf(os.Stderr, usage)
+		_, err := fmt.Fprintf(os.Stderr, usage)
+		if err != nil {
+			log.Fatalf("unable to print error message to STDERR: %s", err)
+		}
 		os.Exit(1)
 	}
 
