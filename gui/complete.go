@@ -55,11 +55,14 @@ func (cd CompleteDialog) dialogArgs() ([]string, error) {
 	return args, nil
 }
 
+// ChoiceImage is an image that can be used alongside a choice in the complete
+// dialog
 type ChoiceImage struct {
 	Name string // unique name to reference image
 	Path string // path to image file
 }
 
+// Choice is an item in the complete dialog a user may choose
 type Choice struct {
 	Display string // Display string for user
 	Insert  string // actual value to insert
@@ -119,6 +122,7 @@ func (cd CompleteDialog) registerImages(ctx context.Context, env gomate.Env) err
 	return nil
 }
 
+// Show will display the completion dialog with all provided choices
 func (cd CompleteDialog) Show(ctx context.Context, env gomate.Env) (string, error) {
 	// if the choice dialog requires images, register them before showing dialog
 	if len(cd.Images) > 0 {
