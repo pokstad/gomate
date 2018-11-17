@@ -61,7 +61,7 @@ func (c Cursor) RuneOffset() (uint, error) {
 	if err != nil {
 		return 0, errors.Wrap(err, "can't open file to determine offset")
 	}
-	defer f.Close()
+	defer f.Close() // nolint: errcheck
 
 	offset, err := CalcOffset(f, c.Line, c.Index)
 	if err != nil {

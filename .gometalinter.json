@@ -1,7 +1,9 @@
 {
   "Enable": [
 	  "golint",
-	  "vet"
+	  "vet",
+	  "deadcode",
+	  "errcheck"
   ],
   "Vendor": true,
   "Exclude": [
