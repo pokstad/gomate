@@ -13,7 +13,7 @@ import (
 	"github.com/pokstad/gomate/gui"
 )
 
-func TestInputDialog(t *testing.T) {
+func TestShowInputDialog(t *testing.T) {
 	env, err := gomate.LoadEnvironment()
 	if err != nil {
 		t.Fatalf("unable to load env vars: %s", err)
@@ -34,7 +34,7 @@ func TestInputDialog(t *testing.T) {
 	t.Logf("resp: %s", resp)
 }
 
-func TestCompleteDialog(t *testing.T) {
+func TestShowCompleteDialog(t *testing.T) {
 	env, err := gomate.LoadEnvironment()
 	if err != nil {
 		t.Fatalf("unable to load env vars: %s", err)

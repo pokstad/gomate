@@ -65,19 +65,14 @@ type ChoiceImage struct {
 // Choice is an item in the complete dialog a user may choose
 type Choice struct {
 	Display string // Display string for user
-	Insert  string // actual value to insert
+	Insert  string // string to insert after match/display
 	Image   string // name of image to be shown alongside choice
 	Match   string // typed text to filter on (defaults to display)
 }
 
-var popupPlistTmpl = template.Must(template.New("popup.plist").Parse(`(
-{{ range .Choices}}
-	{
-		display = "{{ .Display }}";
-		insert = "{{ .Insert }}";
-	},
-{{ end }}
-)`))
+var popupPlistTmpl = template.Must(template.New("popup.plist").Parse(
+	`({{ range .Choices}}{display = "{{ .Display }}"; insert = "{{ .Insert }}";},{{ end }})`,
+))
 
 func choicesToPlist(choices []Choice) ([]byte, error) {
 	// TODO: should an error be returned if no choices are provided?
@@ -96,7 +91,7 @@ func (cd CompleteDialog) registerImages(ctx context.Context, env gomate.Env) err
 	images := make([]string, len(cd.Images))
 	for i := 0; i < len(cd.Images); i++ {
 		images[i] = fmt.Sprintf(
-			"%s = '%s';",
+			`%s = "%s";`,
 			cd.Images[i].Name, cd.Images[i].Path,
 		)
 	}
@@ -112,12 +107,16 @@ func (cd CompleteDialog) registerImages(ctx context.Context, env gomate.Env) err
 		"--register", imagePlist,
 	)
 
+	stderrB := new(bytes.Buffer)
+	cmd.Stderr = stderrB
+
 	output, err := cmd.Output()
 	if err != nil {
+		log.Printf("textmate dialog image registration stderr: %s", stderrB.String())
 		return errors.Wrap(err, "unable to register textmate dialog images")
 	}
 
-	log.Printf("textmate dialog image registration output: %s", output)
+	log.Printf("textmate dialog image registration stdout: %s", output)
 
 	return nil
 }
@@ -143,12 +142,15 @@ func (cd CompleteDialog) Show(ctx context.Context, env gomate.Env) (string, erro
 		args...,
 	)
 
-	output, err := cmd.Output()
+	stderrB := new(bytes.Buffer)
+	cmd.Stderr = stderrB
+
+	out, err := cmd.Output()
 	if err != nil {
+		// log output to debug commands being constructed
+		log.Printf("popup dialog stderr: %s", stderrB.String())
 		return "", errors.Wrap(err, "unable to run textmate popup dialog")
 	}
 
-	log.Printf("popup dialog output: %s", output)
-
-	return "", nil
+	return string(out), nil
 }

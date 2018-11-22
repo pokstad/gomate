@@ -123,8 +123,10 @@ func LoadEnvironment() (env Env, err error) {
 		SoftTabs:    os.Getenv("TM_SOFT_TABS") == "YES",
 		SupportPath: os.Getenv("TM_SUPPORT_PATH"),
 		TabSize:     parseInt(os.Getenv("TM_TAB_SIZE")),
-		GoPath:      envOr("TM_GOPATH", os.Getenv("GOPATH")),
-		Dialog:      os.Getenv("DIALOG"),
+		// gopath hierarchy: first trust textmate var, then try tradiational
+		// GOPATH, finally assume $HOME/go as a last case effort
+		GoPath: envOr("TM_GOPATH", envOr("GOPATH", filepath.Join(os.Getenv("HOME"), "go"))),
+		Dialog: os.Getenv("DIALOG"),
 	}, nil
 }
 
