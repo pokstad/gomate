@@ -2,6 +2,8 @@ github.com/mattn/go-plist v0.0.0-20170211130839-2569f8ead83a h1:MKlkIlFFo5OdN/A7
 github.com/mattn/go-plist v0.0.0-20170211130839-2569f8ead83a/go.mod h1:c3gnIAJD2rglVt+C27TcvWhMDX/MRNkm78pFGzqkDno=
 github.com/pkg/errors v0.8.0 h1:WdK/asTD0HN+q6hsWO3/vpuAkAr+tw6aNJNDFFf0+qw=
 github.com/pkg/errors v0.8.0/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
+github.com/pokstad/offset v0.0.0-20181110164114-f14a768120e2 h1:F7rikPAMOk6HJgWa+MoHiL3lycIJlmD7tZgTnZ6JQq8=
+github.com/pokstad/offset v0.0.0-20181110164114-f14a768120e2/go.mod h1:po7Gu5bvF+fDZ9hSLoTL8QNeTmAb2Ahr3asxhdlC5EM=
 golang.org/x/net v0.0.0-20180301190904-22ae77b79946 h1:Ovdd3aDjGOBx9xVuWVwMZWXbFQ3542Ve+TGnNVoE/Mc=
 golang.org/x/net v0.0.0-20180301190904-22ae77b79946/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
 golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f h1:wMNYb4v58l5UBM7MYRLPG6ZhfOqbKu7X5eyFl8ZhKvA=
