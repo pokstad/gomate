@@ -52,7 +52,7 @@ func main() {
 		for _, repo := range []string{
 			"golang.org/x/tools/cmd/guru",
 			"github.com/zmb3/gogetdoc",
-			"github.com/nsf/gocode",
+			"github.com/stamblerre/gocode",
 			"github.com/rogpeppe/godef",
 			"golang.org/x/tools/cmd/godoc",
 			"github.com/alecthomas/gometalinter",

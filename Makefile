@@ -15,8 +15,12 @@ gogetdoc := $(GOPATH)/bin/gogetdoc
 $(gogetdoc):
 	go get github.com/zmb3/gogetdoc
 
+gocode := $(GOPATH)/bin/gocode
+$(gocode):
+	go get github.com/stamblerre/gocode
+
 # tools are all external commands used by gomate
-tools: $(guru) $(linter) $(gogetdoc)
+tools: $(guru) $(linter) $(gogetdoc) $(gocode)
 
 # assets folder contents are bundles with go executable
 cmd/gomate/assets.go: assets/*
