@@ -1,15 +1,13 @@
 package gomate
 
 import (
-	"bufio"
-	"fmt"
-	"io"
 	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
 
 	"github.com/pkg/errors"
+	"github.com/pokstad/offset/offset"
 )
 
 // Scope refers to the type of symbol under the cursor as determined by the
@@ -27,43 +25,24 @@ const (
 type Cursor struct {
 	Dir          string // directory of current doc (may be empty)
 	Doc          string // filepath to document (may be empty)
-	Line         uint   // line number (starting at 1)
-	Index        uint   // index of line (starting at 1)
+	Line         int    // line number (starting at 1)
+	Index        int    // index of line (starting at 1)
 	Scope        Scope  // scope type specified by grammar
 	Word         string // the word under the cursor (may be empty)
 	SelectedText string // text currently highlighted by cursor (may be empty)
 }
 
-// CalcOffset will return the byte offset for the specified line and column of
-// the reader (e.g. source code file)
-func CalcOffset(r io.Reader, line, col uint) (uint, error) {
-	var (
-		s  = bufio.NewScanner(r)
-		bc = uint(0)
-	)
-
-	for i := uint(1); s.Scan() && i < line; i++ {
-		if err := s.Err(); err != nil {
-			return 0, fmt.Errorf("unable to scan file for offset: %s", err)
-		}
-
-		bc += uint(len(s.Text()) + 1) // add newline to text length
-	}
-
-	return bc + col, nil
-}
-
 // RuneOffset attemps to calculate the rune offset for the cursor in the
 // specified document. An error may occur if the document does not exist OR if
 // the desired offset is out of bounds of the provided file.
-func (c Cursor) RuneOffset() (uint, error) {
+func (c Cursor) RuneOffset() (int, error) {
 	f, err := os.Open(c.Doc)
 	if err != nil {
 		return 0, errors.Wrap(err, "can't open file to determine offset")
 	}
 	defer f.Close() // nolint: errcheck
 
-	offset, err := CalcOffset(f, c.Line, c.Index)
+	offset, err := offset.CalcRune(f, c.Line, c.Index)
 	if err != nil {
 		return 0, errors.Wrap(err, "unable to calculate offset")
 	}
@@ -85,10 +64,10 @@ type Env struct {
 	Drawer Drawer // current state of project drawer?
 
 	// remaining dynamic env vars
-	BundleDir   string // the folder of the bundle that ran the item
+	BundleDir   string // the support folder of the bundle that ran the item
 	SoftTabs    bool   // are soft tabs being used?
 	SupportPath string // common textmate support items
-	TabSize     uint   // size of soft tabs
+	TabSize     int    // size of soft tabs
 
 	// Static Environment Variables
 	GoPath string // GOPATH variable
@@ -108,7 +87,7 @@ func LoadEnvironment() (env Env, err error) {
 			Word:         os.Getenv("TM_CURRENT_WORD"),
 			Dir:          os.Getenv("TM_DIRECTORY"),
 			Doc:          os.Getenv("TM_FILEPATH"),
-			Index:        parseInt(os.Getenv("TM_LINE_INDEX")),
+			Index:        parseInt(os.Getenv("TM_LINE_INDEX")) + 1,
 			Scope:        Scope(os.Getenv("TM_SCOPE")),
 			SelectedText: os.Getenv("TM_SELECTED_TEXT"),
 		},
@@ -138,10 +117,10 @@ func envOr(env, or string) string {
 	return e
 }
 
-func parseInt(i string) uint {
+func parseInt(i string) int {
 	d, err := strconv.ParseInt(i, 10, 32)
 	if err != nil {
 		return 0
 	}
-	return uint(d)
+	return int(d)
 }

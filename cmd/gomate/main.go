@@ -10,6 +10,7 @@ import (
 	"os/exec"
 
 	"github.com/pokstad/gomate"
+	"github.com/pokstad/gomate/code"
 	"github.com/pokstad/gomate/doc"
 	"github.com/pokstad/gomate/gui"
 	"github.com/pokstad/gomate/guru"
@@ -109,6 +110,15 @@ func main() {
 		}
 		err := rename.AtOffset(ctx, renameDialog, env)
 		checkErr(err)
+
+	case "complete":
+		completer := code.Completer{
+			Predictor: code.GoCode{},
+		}
+
+		err = completer.Complete(ctx, env, os.Stdin, os.Stdout)
+		checkErr(err)
+		os.Exit(int(gomate.ExitInsertSnippet))
 
 	}
 
