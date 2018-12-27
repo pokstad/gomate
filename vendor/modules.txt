@@ -2,7 +2,9 @@
 github.com/mattn/go-plist
 # github.com/pkg/errors v0.8.0
 github.com/pkg/errors
+# github.com/pokstad/offset v0.0.0-20181110164114-f14a768120e2
+github.com/pokstad/offset/offset
 # golang.org/x/net v0.0.0-20180301190904-22ae77b79946
 golang.org/x/net/context
-# golang.org/x/sync v0.0.0-20171101214715-fd80eb99c8f6
+# golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f
 golang.org/x/sync/errgroup
