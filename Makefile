@@ -1,4 +1,4 @@
-# Make 'dis shit!
+# Makefile contributing guidelines: KEEP IT SIMPLE STUPID
 
 linter := $(GOPATH)/bin/gometalinter.v2
 $(linter):
